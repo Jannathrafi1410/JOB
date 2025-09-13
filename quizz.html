@@ -1,0 +1,356 @@
+!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Career Predictor — Teen Friendly</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --bg1:#4b2b7f; /* deep purple */
+      --bg2:#7b4bd6; /* lighter purple */
+      --glass: rgba(255,255,255,0.06);
+      --glass-strong: rgba(255,255,255,0.12);
+      --accent: #ffd166; /* warm accent */
+      --muted: rgba(255,255,255,0.7);
+      --card-radius: 18px;
+      --blur: 12px;
+    }
+    *{box-sizing:border-box}
+    html,body{height:100%;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;padding:0;margin:0;color:white}
+    body{
+      background: radial-gradient(1200px 600px at 10% 10%, rgba(255,255,255,0.04), transparent),
+                  linear-gradient(180deg,var(--bg1),var(--bg2));
+      display:flex;align-items:center;justify-content:center;padding:32px;
+    }
+
+    .wrapper{width:100%;max-width:1000px;margin:20px auto}
+    header{display:flex;align-items:center;gap:16px;margin-bottom:18px}
+    .logo{width:64px;height:64px;border-radius:14px;background:linear-gradient(135deg,var(--accent),#ffd6a5);display:grid;place-items:center;color:#2b1a03;font-weight:800;box-shadow:0 6px 20px rgba(0,0,0,0.35)}
+    h1{font-size:22px;margin:0}
+    p.lead{margin:0;color:var(--muted);font-size:14px}
+
+    .card{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:var(--card-radius);padding:22px;backdrop-filter: blur(var(--blur));box-shadow:0 10px 40px rgba(0,0,0,0.45);border:1px solid rgba(255,255,255,0.06)}
+
+    .quiz{display:grid;grid-template-columns:1fr 370px;gap:20px}
+    @media (max-width:980px){.quiz{grid-template-columns:1fr;}.aside{order:2}}
+
+    .question-area{min-height:420px}
+    .qnum{font-weight:600;color:var(--accent);font-size:13px}
+    .qtext{font-size:20px;margin:6px 0 18px}
+
+    .options{display:grid;grid-template-columns:repeat(1,1fr);gap:12px}
+    @media(min-width:620px){.options{grid-template-columns:repeat(2,1fr)}}
+
+    /* Glass option style */
+    .opt{padding:14px;border-radius:14px;background:linear-gradient(180deg,var(--glass),rgba(255,255,255,0.02));border:1px solid rgba(255,255,255,0.08);cursor:pointer;display:flex;align-items:center;gap:12px;transition:transform .18s ease,box-shadow .18s ease}
+    .opt:hover{transform:translateY(-6px);box-shadow:0 8px 30px rgba(0,0,0,0.45)}
+    .opt.selected{background:linear-gradient(180deg,var(--glass-strong),rgba(255,255,255,0.03));box-shadow:0 18px 50px rgba(0,0,0,0.55);border:1px solid rgba(255,255,255,0.12)}
+    .emoji{font-size:22px;width:36px;text-align:center}
+    .opt .label{font-weight:600}
+    .opt .small{font-size:13px;color:var(--muted);margin-top:4px}
+
+    .nav{display:flex;align-items:center;justify-content:space-between;margin-top:18px;gap:12px}
+    .btn{padding:12px 18px;border-radius:12px;background:transparent;border:1px solid rgba(255,255,255,0.08);color:var(--muted);cursor:pointer;font-weight:600}
+    .btn.primary{background:linear-gradient(90deg,var(--accent),#ffb86b);color:#2b1a03;border:none;box-shadow:0 10px 30px rgba(203,133,0,0.18)}
+    .btn:disabled{opacity:.45;cursor:not-allowed}
+
+    .aside{padding:18px;border-radius:14px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);backdrop-filter:blur(8px)}
+    .progress{height:10px;background:rgba(255,255,255,0.04);border-radius:10px;overflow:hidden}
+    .progress > i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),#ffc77c);width:0%}
+    .result{margin-top:14px}
+
+    .result-card{padding:14px;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,0.02),rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.06)}
+    .job-title{font-size:18px;color:#ffd166;font-weight:800}
+    .muted-small{font-size:13px;color:var(--muted)}
+    .roadmap{margin-top:12px;padding-top:8px;border-top:1px dashed rgba(255,255,255,0.04)}
+
+    footer{margin-top:18px;text-align:center;color:var(--muted);font-size:13px}
+
+    /* small niceties */
+    .pill{display:inline-block;padding:6px 10px;border-radius:999px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.04)}
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <header>
+      <div class="logo">CP</div>
+      <div>
+        <h1>Career Predictor</h1>
+        <p class="lead">15 quick questions — premium look, teen-friendly. Pick what feels right and get one career recommendation.</p>
+      </div>
+    </header>
+
+    <div class="card quiz">
+      <div class="question-area">
+        <div class="qhead">
+          <div class="qnum">Question <span id="qIndex">1</span> / 15</div>
+          <div class="progress" style="margin-top:10px"><i id="progressBar"></i></div>
+        </div>
+
+        <div style="margin-top:18px">
+          <div class="qtext" id="qText"></div>
+          <div class="options" id="options"></div>
+        </div>
+
+        <div class="nav">
+          <button class="btn" id="prevBtn">◀ Previous</button>
+          <div style="display:flex;gap:12px;align-items:center;">
+            <div class="pill muted-small" id="hint">Tap an option to select</div>
+            <button class="btn primary" id="nextBtn">Next ▶</button>
+          </div>
+        </div>
+      </div>
+
+      <aside class="aside">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px">
+          <div>
+            <div class="muted-small">Your progress</div>
+            <div style="font-weight:700;font-size:20px;margin-top:6px" id="answeredCount">0 / 15 answered</div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted-small">Teen score</div>
+            <div style="font-weight:800;font-size:22px;color:var(--accent)" id="scoreBadge">—</div>
+          </div>
+        </div>
+
+        <div class="result" id="resultPreview" aria-live="polite">
+          <div style="margin-top:12px" class="result-card">
+            <div class="muted-small">Current leading field</div>
+            <div style="margin-top:8px;display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div id="leadingField" style="font-weight:800">—</div>
+                <div class="muted-small">Most likely match so far</div>
+              </div>
+              <div><button class="btn" id="finishBtn">Finish & Predict</button></div>
+            </div>
+            <div class="roadmap" id="miniRoadmap" style="display:none"></div>
+          </div>
+        </div>
+
+        <div style="margin-top:12px;font-size:13px;color:var(--muted)">Want a different result? Use <strong>Retake Quiz</strong> after prediction.</div>
+      </aside>
+    </div>
+
+    <footer>
+      Built with ❤️ for curious teens • Try it, tweak it, share it
+    </footer>
+  </div>
+
+  <script>
+    // Questions & options
+    const questions = [
+      "Do you enjoy solving puzzles, coding, or playing with numbers on a computer?",
+      "Do you like designing, building, or fixing machines, gadgets, or structures?",
+      "Do you feel excited about helping people stay healthy or saving lives?",
+      "Do you dream about running a business, handling money, or being your own boss?",
+      "Do you enjoy explaining things, teaching friends, or helping them learn?",
+      "Do you care about justice, fairness, or making a difference in society?",
+      "Do you love expressing yourself through art, music, acting, or creative projects?",
+      "Do you prefer hands-on jobs like cooking, repairing, or creating things with your hands?",
+      "Do you enjoy traveling, exploring new places, and meeting people from different cultures?",
+      "Do you get curious about science, experiments, or protecting the environment?",
+      "Do you feel excited about futuristic stuff like AI, robots, or cybersecurity?",
+      "Do you like leading teams, persuading people, or being the decision-maker?",
+      "Do you enjoy making content like YouTube videos, blogs, games, or cool designs?",
+      "Do you prefer safe and stable jobs with clear paths over risky, adventurous ones?",
+      "Do you get excited about jobs that involve travel, freedom, and new experiences?"
+    ];
+
+    // Each question maps to a primary field index (0-based):
+    // 0 Tech,1 Engineering,2 Healthcare,3 Business,4 Education,5 Law/Gov,6 Arts,7 Trades,8 Hospitality,9 Science
+    const qToField = [0,1,2,3,4,5,6,7,8,9,0,3,6,5,8];
+
+    // Option labels and emojis, scoring 0..4
+    const optionsList = [
+      {emoji:'❌',label:'Not Interested'},
+      {emoji:'🤔',label:'Maybe'},
+      {emoji:'😎',label:'Sounds Cool'},
+      {emoji:'🚀',label:'Super Interested'},
+      {emoji:'🔥',label:"Totally My Thing"}
+    ];
+
+    // Fields metadata: name and representative job
+    const fields = [
+      {name:'Technology & IT',job:'Software Developer',benefit:'High demand, flexible work, ability to build products that scale.',roadmap:`Start with Python, JavaScript or Java. Build small projects, make a GitHub portfolio, learn data structures & algorithms, and consider a CS degree or bootcamp. Do internships and open-source contributions.`},
+      {name:'Engineering',job:'Mechanical Engineer',benefit:'Tangible impact, problem solving, versatile career across industries.',roadmap:`Pursue B.Tech/B.E in an engineering branch (Mechanical/Civil/Electrical). Get hands-on with CAD, workshops, internships, and project-based learning.`},
+      {name:'Healthcare & Medicine',job:'Doctor / Medical Professional',benefit:'High social impact, stable demand, respected profession.',roadmap:`Complete pre-medical courses, pursue MBBS or nursing/diploma routes, complete internships/residency, and stay updated with certifications.`},
+      {name:'Business & Finance',job:'Entrepreneur / Business Analyst',benefit:'Independence, leadership opportunities, financial upside.',roadmap:`Study commerce or business, learn finance basics, take online courses in Excel/SQL, build projects or start small ventures, and intern in startups/companies.`},
+      {name:'Education & Research',job:'Teacher / Researcher',benefit:'Shape minds, flexible career, chance to pursue higher studies.',roadmap:`Earn a subject degree, get a B.Ed for school teaching, or pursue M.Sc/PhD for research/college teaching. Build experience via tutoring or internships.`},
+      {name:'Law, Government & Public Service',job:'Civil Servant / Lawyer',benefit:'Prestige, stability, impact on society.',roadmap:`Study law (LLB) or pursue required degrees, prepare for competitive exams (like UPSC) if aiming for civil services, and gain field experience.`},
+      {name:'Arts, Media & Communication',job:'Content Creator / Designer',benefit:'Creative freedom, audience building, multiple monetization routes.',roadmap:`Practice your craft (design, music, video). Build a portfolio, learn editing tools, collaborate, and grow an online presence.`},
+      {name:'Trades & Skilled Work',job:'Electrician / Technician',benefit:'Hands-on work, great demand, quick entry via vocational training.',roadmap:`Enroll in vocational training or apprenticeships. Gain certifications, practice on real tasks, and build a client base or join companies.`},
+      {name:'Hospitality & Tourism',job:'Travel & Hospitality Professional',benefit:'Travel opportunities, people-centred work, diverse roles.',roadmap:`Study hospitality/tourism or learn through experience. Get multilingual skills, internships in hotels, airlines, or travel agencies.`},
+      {name:'Science & Environment',job:'Research Scientist / Environmental Analyst',benefit:'Discovery, contribution to sustainability and innovation.',roadmap:`Pursue B.Sc in a science field, followed by M.Sc/PhD for research. Join labs, get internships, and publish work.`}
+    ];
+
+    // scores per field
+    let scores = Array(fields.length).fill(0);
+    let answers = Array(questions.length).fill(null);
+    let current = 0;
+
+    const qText = document.getElementById('qText');
+    const optionsEl = document.getElementById('options');
+    const qIndex = document.getElementById('qIndex');
+    const progress = document.getElementById('progressBar');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    const answeredCount = document.getElementById('answeredCount');
+    const leadingField = document.getElementById('leadingField');
+    const finishBtn = document.getElementById('finishBtn');
+    const scoreBadge = document.getElementById('scoreBadge');
+    const miniRoadmap = document.getElementById('miniRoadmap');
+
+    function renderQuestion(i){
+      qIndex.textContent = i+1;
+      qText.textContent = questions[i];
+      optionsEl.innerHTML = '';
+      optionsList.forEach((opt, idx)=>{
+        const div = document.createElement('div');
+        div.className = 'opt';
+        if(answers[i]===idx) div.classList.add('selected');
+        div.innerHTML = `<div class="emoji">${opt.emoji}</div><div><div class='label'>${opt.label}</div><div class='small'>${opt.emoji} — ${opt.label}</div></div>`;
+        div.addEventListener('click', ()=> selectOption(i, idx, div));
+        optionsEl.appendChild(div);
+      });
+      updateProgress();
+    }
+
+    function selectOption(qIdx,optIdx,el){
+      // store answer and update scores
+      answers[qIdx] = optIdx;
+      // rebuild scores from scratch
+      scores = Array(fields.length).fill(0);
+      answers.forEach((ans, qi)=>{
+        if(ans!==null){
+          const field = qToField[qi];
+          scores[field] += ans; // 0..4
+        }
+      });
+      // update selected styling
+      document.querySelectorAll('.opt').forEach((o, k)=>{o.classList.toggle('selected', k===optIdx)});
+      updatePreview();
+      updateAnsweredCount();
+    }
+
+    function updateAnsweredCount(){
+      const count = answers.filter(a=>a!==null).length;
+      answeredCount.textContent = `${count} / ${questions.length} answered`;
+    }
+
+    function updateProgress(){
+      const pct = Math.round((current)/(questions.length-1)*100);
+      progress.style.width = pct + '%';
+    }
+
+    function updatePreview(){
+      // find leading field
+      const max = Math.max(...scores);
+      if(max>0){
+        const idx = scores.indexOf(max);
+        leadingField.textContent = fields[idx].name;
+        scoreBadge.textContent = `${max} pts`;
+        miniRoadmap.style.display = 'block';
+        miniRoadmap.innerHTML = `<div class='muted-small'>Representative job: <strong>${fields[idx].job}</strong></div><div style='margin-top:8px;font-size:13px;color:var(--muted)'>${fields[idx].benefit}</div>`;
+      } else {
+        leadingField.textContent = '—';
+        scoreBadge.textContent = '—';
+        miniRoadmap.style.display = 'none';
+      }
+    }
+
+    prevBtn.addEventListener('click', ()=>{
+      if(current>0){ current--; renderQuestion(current); }
+    });
+
+    nextBtn.addEventListener('click', ()=>{
+      if(current < questions.length-1){ current++; renderQuestion(current); } else {
+        // finished
+        computeResult();
+      }
+    });
+
+    finishBtn.addEventListener('click', computeResult);
+
+    function computeResult(){
+      // If unanswered, treat as 0s
+      const max = Math.max(...scores);
+      const topIdx = scores.indexOf(max);
+      // if still all zeros, pick based on highest answered single mapping
+      let finalIdx = topIdx;
+      if(max===0){
+        // fallback: look for any answered question and take its mapped field
+        const any = answers.findIndex(a=>a!==null);
+        finalIdx = any===-1?0:qToField[any];
+      }
+
+      showResult(finalIdx);
+    }
+
+    function showResult(fieldIdx){
+      // replace quiz with result summary modal in the aside area
+      const field = fields[fieldIdx];
+      // Build a beautiful result overlay below the quiz
+      const overlay = document.createElement('div');
+      overlay.className = 'card';
+      overlay.style.marginTop = '18px';
+      overlay.innerHTML = `
+        <div style='display:flex;justify-content:space-between;align-items:center;gap:12px'>
+          <div>
+            <div style='font-size:13px;color:var(--muted)'>Best fit</div>
+            <div class='job-title'>${field.job}</div>
+            <div style='margin-top:6px;font-weight:700'>Field: ${field.name}</div>
+            <div style='margin-top:8px;color:var(--muted);font-size:14px'>${field.benefit}</div>
+          </div>
+          <div style='text-align:right'>
+            <div style='font-size:12px;color:var(--muted)'>Confidence</div>
+            <div style='font-weight:800;font-size:28px;color:var(--accent)'>${Math.min(95, 10 + (scores[fieldIdx] * 10))}%</div>
+          </div>
+        </div>
+        <div class='roadmap'>
+          <h3 style='margin:10px 0 6px;color:var(--accent)'>How to get there — roadmap</h3>
+          <div style='font-size:14px;color:var(--muted);line-height:1.5'>${field.roadmap}</div>
+          <h4 style='margin-top:10px;color:var(--accent)'>Benefits</h4>
+          <div style='font-size:14px;color:var(--muted)'>${field.benefit}</div>
+          <div style='margin-top:12px;display:flex;gap:10px;flex-wrap:wrap'>
+            <button class='btn' id='retake'>Retake Quiz</button>
+            <button class='btn primary' id='share'>Save / Share Result</button>
+          </div>
+        </div>
+      `;
+
+      // append below wrapper
+      document.querySelector('.wrapper').appendChild(overlay);
+
+      document.getElementById('retake').addEventListener('click', ()=>{
+        // reset
+        scores = Array(fields.length).fill(0);
+        answers = Array(questions.length).fill(null);
+        current = 0;
+        overlay.remove();
+        renderQuestion(0);
+        updateAnsweredCount();
+        updatePreview();
+      });
+
+      document.getElementById('share').addEventListener('click', ()=>{
+        const shareText = `My career match: ${field.job} — ${field.name}. Roadmap: ${field.roadmap}`;
+        if(navigator.share){
+          navigator.share({title:'My Career Predictor result',text:shareText}).catch(()=>alert('Sharing failed'));
+        } else {
+          prompt('Copy your result', shareText);
+        }
+      });
+
+      // scroll to result
+      overlay.scrollIntoView({behavior:'smooth'});
+    }
+
+    // initialize
+    renderQuestion(0);
+    updateAnsweredCount();
+    updatePreview();
+
+  </script>
+</body>
+</html>
